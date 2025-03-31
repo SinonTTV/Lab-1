@@ -18,7 +18,7 @@
 
 // Глобальні змінні:
 HINSTANCE hInst; 	//Дескриптор програми	
-LPCTSTR AndriyenkoSavchenkoPogorelyi = L"QWERTY";
+LPCTSTR CLASSNAME = L"AndriyenkoSavchenkoPogorelyi";
 LPCTSTR szTitle = L"Window";
 TCHAR buff[50];
 HACCEL hAccel;
@@ -34,7 +34,7 @@ INT_PTR CALLBACK AboutDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
 	MSG msg;
-
+	
 	// Реєстрація класу вікна 
 	MyRegisterClass(hInstance);
 
@@ -55,20 +55,23 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
 	WNDCLASSEX wcex;
+
+	
+
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS; 		//стиль вікна
 	wcex.lpfnWndProc = (WNDPROC)WndProc; 		//віконна процедура
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = hInstance; 			//дескриптор програми
-	wcex.hIcon = LoadIcon(NULL, IDI_HAND); //визначення іконки
-	wcex.hCursor = LoadCursor(NULL, IDC_ARROW); 	//визначення курсору
+	wcex.hIcon = LoadIcon(NULL, IDI_INFORMATION); //визначення іконки
+	wcex.hCursor = LoadCursor(NULL, IDC_NO); 	//визначення курсору
 	wcex.hbrBackground = GetSysColorBrush(COLOR_WINDOW); //установка фону
 	wcex.lpszMenuName = MAKEINTRESOURCE(IDR_MENU1); 				//визначення меню
-	wcex.lpszClassName = AndriyenkoSavchenkoPogorelyi; 		//ім’я класу
+	wcex.lpszClassName = CLASSNAME; 		//ім’я класу
 	wcex.hIconSm = NULL;
-
-
+	
+	
 	return RegisterClassEx(&wcex); 			//реєстрація класу вікна
 }
 
@@ -89,9 +92,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 
 	hInst = hInstance; //зберігає дескриптор додатка в змінній hInst
-	hWnd = CreateWindow(AndriyenkoSavchenkoPogorelyi,  // ім’я класу вікна
+	hWnd = CreateWindow(CLASSNAME,  // ім’я класу вікна
 		szTitle,  // назва програми
-		WS_OVERLAPPEDWINDOW,  // стиль вікна
+		WS_CAPTION | WS_SYSMENU,  // стиль вікна
 		xPos,  // положення по Х
 		yPos,  // положення по Y
 		windowWidth,  // розмір по Х
@@ -149,14 +152,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			//Змінити Курсор
 		case  ID_CHANGE_CURSOR:
-			SetClassLongPtr(hWnd, GCLP_HCURSOR, (LONG)LoadCursor(hInst, MAKEINTRESOURCE(IDC_NO)));
+			SetClassLongPtr(hWnd, GCLP_HCURSOR, (LONG)LoadCursor(hInst, MAKEINTRESOURCE(IDC_YES)));
 			break;
 
 			//Змінити Іконку
 		case ID_CHANGE_ICON:
-			SetClassLongPtr(hWnd, GCLP_HICON, (LONG)LoadIcon(hInst, MAKEINTRESOURCE(IDI_INFORMATION)));
+			SetClassLongPtr(hWnd, GCLP_HICON, (LONG)LoadIcon(hInst, MAKEINTRESOURCE(IDI_SMALLICON)));
 			break;
-
+			
 			//Змінити Заголовок
 		case ID_CHANGE_HEADLINE:
 			LoadString(hInst, IDS_STRING107, buff, 50);
@@ -199,21 +202,29 @@ INT_PTR CALLBACK AboutDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
-		case IDOK: // Кнопка "ОК"
+		case IDCANCEL:  // Кнопка "Закрити"
+			// Підтвердження перед закриттям
+			if (MessageBox(hDlg, L"Ви впевнені?", L"Підтвердити закриття", MB_YESNO | MB_ICONQUESTION) == IDYES) {
+				EndDialog(hDlg, LOWORD(wParam));  // Закрити діалогове вікно
+			}
+			return TRUE;
+
+		case IDOK:  // Кнопка "ОК"
 			EndDialog(hDlg, LOWORD(wParam));
 			return TRUE;
-		case IDCANCEL: // Кнопка "Закрити"
-			SendMessage(GetParent(hDlg), WM_CLOSE, 0, 0);
-			EndDialog(hDlg, LOWORD(wParam));
-			return TRUE;
-		case IDC_DETAILS: // Кнопка "Докладніше"
+
+		case IDC_DETAILS:  // Кнопка "Докладніше"
+			// Вивести додаткову інформацію
 			MessageBox(hDlg, L"Це тестова програма, зроблена для WinAPI.", L"Докладніше", MB_OK | MB_ICONINFORMATION);
 			return TRUE;
+
+			
 		}
 		break;
 	}
 	return FALSE;
 }
+
 
 
 

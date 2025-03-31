@@ -137,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon1.ico" />
+    <Image Include="smallico.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cursor1.cur" />
