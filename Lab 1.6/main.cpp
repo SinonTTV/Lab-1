@@ -180,15 +180,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			DestroyWindow(hWnd);
 		}
-		else
-		{
-			return 0;
-		}
 
 		break;
 
-
-	default:
+			default:
 		//Обробка повідомлень, які не оброблені користувачем
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
